@@ -29,4 +29,3 @@ k8s/secret.yaml
 *.pem
 
 # Docker
-.dockerignore
