@@ -22,11 +22,11 @@ fi
 read -p "Enter version tag (default: v1): " VERSION
 VERSION=${VERSION:-v1}
 
-echo -e "${GREEN}Building backend image...${NC}"
-docker build -t ${DOCKER_USERNAME}/litellm-backend:${VERSION} ./backend
+echo -e "${GREEN}Building backend image for linux/amd64...${NC}"
+docker build --platform linux/amd64 -t ${DOCKER_USERNAME}/litellm-backend:${VERSION} ./backend
 
-echo -e "${GREEN}Building frontend image...${NC}"
-docker build -t ${DOCKER_USERNAME}/litellm-frontend:${VERSION} ./frontend
+echo -e "${GREEN}Building frontend image for linux/amd64...${NC}"
+docker build --platform linux/amd64 -t ${DOCKER_USERNAME}/litellm-frontend:${VERSION} ./frontend
 
 echo -e "${GREEN}✓ Build complete!${NC}"
 echo ""
