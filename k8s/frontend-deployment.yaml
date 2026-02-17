@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: YOUR_DOCKERHUB_USERNAME/litellm-frontend:v1
+        image: carlosmw/litellm-frontend:v1
         ports:
         - containerPort: 80
           name: http
