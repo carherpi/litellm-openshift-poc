@@ -4,14 +4,25 @@
 
 ### 1. Create Secret
 
-Copy the template and fill in your values:
+**Option A: Using .env file (Recommended)**
+
+```bash
+# Copy the template
+cp ../.env.template ../.env
+
+# Edit .env with your actual credentials
+# Then generate the secret:
+../scripts/create-secret.sh
+```
+
+**Option B: Manual YAML editing**
 
 ```bash
 cp secret.yaml.template secret.yaml
 # Edit secret.yaml with your actual credentials
 ```
 
-**IMPORTANT:** `secret.yaml` is gitignored. Never commit actual secrets!
+**IMPORTANT:** Both `.env` and `secret.yaml` are gitignored. Never commit actual secrets!
 
 ### 2. Deploy to OpenShift
 
