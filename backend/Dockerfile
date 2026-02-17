@@ -10,6 +10,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY app.py .
 
+# Install health check dependency
+RUN apk add --no-cache wget
+
 # Create non-root user
 RUN adduser -D appuser && chown -R appuser:appuser /app
 USER appuser
