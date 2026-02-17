@@ -1,26 +1,37 @@
 #!/bin/bash
 
-# Build Docker images for OpenShift demo application
-# Usage: ./build.sh [VERSION]
-
 set -e
 
-VERSION=${1:-latest}
-REGISTRY=${REGISTRY:-quay.io}
-NAMESPACE=${NAMESPACE:-your-namespace}
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-echo "Building images with version: $VERSION"
+echo -e "${YELLOW}Building Docker images...${NC}"
 
-# Build backend image
-echo "Building backend image..."
-docker build -t ${REGISTRY}/${NAMESPACE}/openshift-demo-backend:${VERSION} \
-  -f backend/Dockerfile backend/
+# Get Docker Hub username
+read -p "Enter your Docker Hub username: " DOCKER_USERNAME
 
-# Build frontend image
-echo "Building frontend image..."
-docker build -t ${REGISTRY}/${NAMESPACE}/openshift-demo-frontend:${VERSION} \
-  -f frontend/Dockerfile frontend/
+if [ -z "$DOCKER_USERNAME" ]; then
+    echo -e "${RED}Error: Docker Hub username is required${NC}"
+    exit 1
+fi
 
-echo "Build complete!"
-echo "Backend image: ${REGISTRY}/${NAMESPACE}/openshift-demo-backend:${VERSION}"
-echo "Frontend image: ${REGISTRY}/${NAMESPACE}/openshift-demo-frontend:${VERSION}"
+# Get version tag (default: v1)
+read -p "Enter version tag (default: v1): " VERSION
+VERSION=${VERSION:-v1}
+
+echo -e "${GREEN}Building backend image...${NC}"
+docker build -t ${DOCKER_USERNAME}/litellm-backend:${VERSION} ./backend
+
+echo -e "${GREEN}Building frontend image...${NC}"
+docker build -t ${DOCKER_USERNAME}/litellm-frontend:${VERSION} ./frontend
+
+echo -e "${GREEN}✓ Build complete!${NC}"
+echo ""
+echo "Images created:"
+echo "  - ${DOCKER_USERNAME}/litellm-backend:${VERSION}"
+echo "  - ${DOCKER_USERNAME}/litellm-frontend:${VERSION}"
+echo ""
+echo "Next step: Run ./scripts/push.sh to push images to Docker Hub"
