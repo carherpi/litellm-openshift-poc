@@ -16,51 +16,42 @@ spec:
     spec:
       containers:
       - name: backend
-        image: backend:latest
+        image: YOUR_DOCKERHUB_USERNAME/litellm-backend:v1
         ports:
-        - containerPort: 8080
+        - containerPort: 8000
+          name: http
         env:
-        - name: DB_HOST
+        - name: LLM_API_BASE
           valueFrom:
             secretKeyRef:
-              name: app-secrets
-              key: db-host
-        - name: DB_PORT
+              name: litellm-secrets
+              key: LLM_API_BASE
+        - name: LLM_API_KEY
           valueFrom:
             secretKeyRef:
-              name: app-secrets
-              key: db-port
-        - name: DB_NAME
+              name: litellm-secrets
+              key: LLM_API_KEY
+        - name: LLM_MODEL
           valueFrom:
             secretKeyRef:
-              name: app-secrets
-              key: db-name
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: app-secrets
-              key: db-user
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: app-secrets
-              key: db-password
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
+              name: litellm-secrets
+              key: LLM_MODEL
         resources:
           requests:
             memory: "128Mi"
-            cpu: "100m"
+            cpu: "250m"
           limits:
             memory: "256Mi"
-            cpu: "200m"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
