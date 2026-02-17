@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: carlosmw/litellm-frontend:v2
+        image: carlosmw/litellm-frontend:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
           name: http
