@@ -21,10 +21,6 @@ LLM_API_BASE = os.getenv("LLM_API_BASE", "")
 LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-3.5-turbo")
 
-# Configure LiteLLM
-if LLM_API_BASE:
-    litellm.api_base = LLM_API_BASE
-
 class ChatRequest(BaseModel):
     message: str
 
@@ -49,14 +45,17 @@ async def chat(request: ChatRequest):
             raise HTTPException(status_code=400, detail="Message cannot be empty")
 
         # Call LLM via LiteLLM
-        response = litellm.completion(
-            model=LLM_MODEL,
-            messages=[
-                {"role": "user", "content": request.message}
-            ],
-            api_key=LLM_API_KEY,
-            api_base=LLM_API_BASE if LLM_API_BASE else None
-        )
+        kwargs = {
+            "model": LLM_MODEL,
+            "messages": [{"role": "user", "content": request.message}],
+            "api_key": LLM_API_KEY,
+        }
+
+        # Add api_base if provided (for custom/OpenAI-compatible endpoints)
+        if LLM_API_BASE:
+            kwargs["api_base"] = LLM_API_BASE
+
+        response = litellm.completion(**kwargs)
 
         # Extract response text
         assistant_message = response.choices[0].message.content

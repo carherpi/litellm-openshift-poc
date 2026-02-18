@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: litellm-chat
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/YOUR_GITHUB_USERNAME/litellm-openshift-poc.git
+    targetRevision: main
+    path: k8s
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: YOUR_OPENSHIFT_NAMESPACE
+
+  syncPolicy:
+    automated:
+      prune: true      # Delete resources when removed from Git
+      selfHeal: true   # Automatically sync when cluster state drifts
+    syncOptions:
+      - CreateNamespace=false  # Don't create namespace (already exists)

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://backend-service:8000';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '/api';
 
 function App() {
   const [messages, setMessages] = useState([]);

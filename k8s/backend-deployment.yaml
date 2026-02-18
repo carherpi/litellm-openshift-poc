@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: carlosmw/litellm-backend:v1
+        image: carlosmw/litellm-backend:v5
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

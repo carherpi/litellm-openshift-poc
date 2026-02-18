@@ -25,16 +25,13 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built app from builder stage
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Create non-root user
-RUN adduser -D -H -u 1000 -s /sbin/nologin nginx-user && \
-    chown -R nginx-user:nginx-user /usr/share/nginx/html && \
-    chown -R nginx-user:nginx-user /var/cache/nginx && \
-    chown -R nginx-user:nginx-user /var/log/nginx && \
-    touch /var/run/nginx.pid && \
-    chown -R nginx-user:nginx-user /var/run/nginx.pid
+# Support arbitrary user IDs (OpenShift requirement)
+RUN chmod -R g+rwx /var/cache/nginx /var/run /var/log/nginx /usr/share/nginx/html && \
+    chgrp -R 0 /var/cache/nginx /var/run /var/log/nginx /usr/share/nginx/html
 
-USER nginx-user
+# OpenShift will assign arbitrary UID, we just need group 0
+USER 1001
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]
