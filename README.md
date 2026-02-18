@@ -4,11 +4,12 @@ A hands-on learning project to understand OpenShift, Kubernetes, and GitOps with
 
 ## What You'll Learn
 
-- **Kubernetes Fundamentals:** Pods, Services, Deployments, Routes, Secrets
-- **OpenShift Specifics:** Routes, Projects, OpenShift CLI (`oc`)
-- **GitOps with ArgoCD:** Automated deployments from Git
-- **Container Orchestration:** Multi-container applications
-- **Progressive Learning:** Manual deployment → GitOps automation
+- **Kubernetes Fundamentals:** Pods, Services, Deployments, Routes, Secrets ✅
+- **OpenShift Specifics:** Routes, Projects, OpenShift CLI (`oc`) ✅
+- **Container Orchestration:** Multi-container applications ✅
+- **Docker Multi-architecture Builds:** Building for different platforms (ARM64 vs AMD64) ✅
+- **GitOps with ArgoCD:** Automated deployments from Git 📚 (requires cluster-admin)
+- **Progressive Learning:** Manual deployment → GitOps automation 📚
 
 ## Architecture
 
@@ -44,49 +45,74 @@ graph TB
 
 1. **Clone and setup**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/litellm-openshift-poc.git
+   git clone https://github.com/carherpi/litellm-openshift-poc.git
    cd litellm-openshift-poc
    ```
 
-2. **Build images**
+2. **Create credentials file**
    ```bash
-   ./scripts/build.sh
-   # Enter your Docker Hub username when prompted
+   cp .env.template .env
+   # Edit .env with your LLM API credentials
    ```
 
-3. **Push images**
-   ```bash
-   ./scripts/push.sh
-   # Login to Docker Hub if needed
-   ```
-
-4. **Update Kubernetes manifests**
-   ```bash
-   # Edit k8s/backend-deployment.yaml and k8s/frontend-deployment.yaml
-   # Replace YOUR_DOCKERHUB_USERNAME with your actual username
-   ```
-
-5. **Create secret**
-   ```bash
-   cp k8s/secret.yaml.template k8s/secret.yaml
-   # Edit k8s/secret.yaml with your LLM credentials
-   ```
-
-6. **Deploy to OpenShift**
+3. **Login to OpenShift**
    ```bash
    oc login --token=YOUR_TOKEN --server=YOUR_SERVER
-   oc apply -f k8s/
+   # Get token from Red Hat Developer Sandbox
    ```
 
-7. **Access application**
+4. **Build, push, and deploy (one command)**
+   ```bash
+   ./scripts/redeploy.sh
+   # This builds images, pushes to Docker Hub, and deploys to OpenShift
+   # Enter your Docker Hub username when prompted (default: carlosmw)
+   # Enter version tag when prompted (default: latest version)
+   ```
+
+5. **Access application**
    ```bash
    oc get route frontend-route -o jsonpath='{.spec.host}'
    # Open the URL in your browser
    ```
 
-### Phase 2: ArgoCD GitOps
+### Phase 1 Complete! ✅
 
-See [`argocd/README.md`](argocd/README.md) for detailed ArgoCD setup.
+Your application is now running on OpenShift. You can access it at:
+```bash
+oc get route frontend-route -o jsonpath='{.spec.host}'
+```
+
+## Next Steps
+
+### ArgoCD GitOps (Phase 2)
+
+**Prerequisites:** Cluster-admin permissions (not available in Red Hat Developer Sandbox)
+
+ArgoCD automates deployments by monitoring your Git repository and keeping your cluster in sync with your `k8s/` manifests. This eliminates manual `oc apply` commands and enables true GitOps workflows.
+
+**To explore ArgoCD, you'll need:**
+- A local Kubernetes cluster (kind, minikube, or Docker Desktop) with full admin rights, OR
+- A different OpenShift environment where you have cluster-admin permissions
+
+**What you'll learn:**
+- GitOps principles (Git as single source of truth)
+- Automated deployments from Git commits
+- Drift detection and self-healing
+- Visual application topology in ArgoCD UI
+- Declarative infrastructure management
+
+See [`argocd/README.md`](argocd/README.md) for installation instructions when you have the required permissions.
+
+### Other Learning Opportunities
+
+**With your current sandbox access:**
+- ConfigMaps for application configuration
+- Horizontal Pod Autoscaling (HPA)
+- Rolling updates and rollback strategies
+- Resource quotas and limits
+- Multi-replica deployments and load balancing
+- Liveness and readiness probes tuning
+- OpenShift monitoring and metrics
 
 ## Project Structure
 
@@ -134,12 +160,14 @@ See [`argocd/README.md`](argocd/README.md) for detailed ArgoCD setup.
 - ✅ Can read logs with `oc logs`
 - ✅ Understand container-to-container communication
 
-### After Phase 2
-- ✅ Understand GitOps principles
-- ✅ Know how ArgoCD monitors Git repositories
-- ✅ Can trigger deployments via Git commits
-- ✅ Understand declarative vs imperative deployments
-- ✅ Can rollback using Git revert
+### After Phase 2 (ArgoCD - Future Learning)
+- 📚 Understand GitOps principles
+- 📚 Know how ArgoCD monitors Git repositories
+- 📚 Can trigger deployments via Git commits
+- 📚 Understand declarative vs imperative deployments
+- 📚 Can rollback using Git revert
+
+**Note:** Phase 2 requires cluster-admin permissions. See "Next Steps" section above.
 
 ## Common Commands
 
